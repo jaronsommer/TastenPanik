@@ -1,0 +1,78 @@
+# ============================================================
+#  .gitignore — Dateien die NICHT auf GitHub hochgeladen werden
+# ============================================================
+#  Autor  : Jaron Sommer
+#  Schule : OZW Wiedlisbach
+# ============================================================
+
+# =========================
+# Betriebssystem-Dateien
+# =========================
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# =========================
+# IntelliJ / JetBrains
+# =========================
+.idea/
+*.iml
+*.iws
+*.ipr
+
+# Wichtige Ausnahme (optional, wenn du Projektsettings teilen willst)
+#.idea/codeStyles/
+#.idea/inspectionProfiles/
+
+# =========================
+# VS Code
+# =========================
+.vscode/
+
+# =========================
+# Build-Ordner
+# =========================
+target/        # Maven
+build/         # Gradle
+out/           # IntelliJ
+
+# =========================
+# Logs & temporäre Dateien
+# =========================
+*.log
+*.tmp
+*.swp
+
+# =========================
+# Java
+# =========================
+*.class
+
+# =========================
+# Node.js (z.B. bei Vaadin Frontend)
+# =========================
+node_modules/
+npm-debug.log
+package-lock.json
+pnpm-lock.yaml
+yarn.lock
+
+# =========================
+# Vaadin spezifisch
+# =========================
+frontend/generated/
+frontend/.vite/
+vite.generated.ts
+
+# =========================
+# SSH-Keys (NIEMALS einchecken!)
+# =========================
+*.pem
+*.key
+id_rsa
+id_ed25519
+
+# =========================
+# Sonstiges
+# =========================
+.env
