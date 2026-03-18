@@ -1,0 +1,82 @@
+# ============================================================
+#  GitHub Actions — Automatisches Deployment via SSH + rsync
+# ============================================================
+#  Autor  : Jaron Sommer
+#  E-Mail : jaron.sommer.ch@icloud.ch
+#  Schule : OZW Wiedlisbach
+#
+#  Was macht diese Datei?
+#  Jedes Mal wenn du Code auf den "main"-Branch pushst,
+#  wird diese Workflow automatisch ausgelöst und kopiert
+#  alle Dateien per rsync (verschlüsselt über SSH) auf
+#  deinen Server.
+# ============================================================
+
+name: Deploy Bergsteiger
+
+# ── AUSLÖSER ────────────────────────────────────────────────
+# Der Workflow startet automatisch bei jedem Push auf "main".
+# Willst du einen anderen Branch verwenden (z.B. "master"),
+# ändere "main" unten entsprechend.
+on:
+  push:
+    branches:
+      - main
+
+# ── JOBS ────────────────────────────────────────────────────
+# Ein "Job" ist eine Aufgabe die auf einem GitHub-Server läuft.
+# Dieser Job heisst "deploy" und läuft auf Ubuntu Linux.
+jobs:
+  deploy:
+    name: Deploy to SSH Server
+    runs-on: ubuntu-latest  # GitHub stellt einen frischen Ubuntu-Container bereit
+
+    steps:
+
+      # ── SCHRITT 1: Code auschecken ─────────────────────────
+      # Lädt den aktuellen Stand deines Repositories in den
+      # GitHub-Actions-Container herunter.
+      - name: Repository auschecken
+        uses: actions/checkout@v4
+
+      # ── SCHRITT 2: SSH-Key einrichten ──────────────────────
+      # Liest den privaten SSH-Key aus den GitHub Secrets
+      # und legt ihn temporär im Container ab, damit rsync
+      # sich beim Server authentifizieren kann.
+      - name: SSH-Key einrichten
+        run: |
+          mkdir -p ~/.ssh
+          # Privaten Key aus den Secrets schreiben
+          echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/deploy_key
+          # Berechtigungen setzen: nur der Besitzer darf lesen/schreiben
+          chmod 600 ~/.ssh/deploy_key
+          # Server-Fingerprint vorab speichern → verhindert interaktive Rückfrage
+          # ssh-keyscan holt den öffentlichen Fingerprint des Servers
+          ssh-keyscan -p ${{ secrets.SSH_PORT }} ${{ secrets.SSH_HOST }} >> ~/.ssh/known_hosts
+
+      # ── SCHRITT 3: Dateien auf den Server kopieren ─────────
+      # rsync überträgt nur geänderte Dateien (effizient!).
+      # Flags erklärt:
+      #   -r  = rekursiv (Unterordner miteinschliessen)
+      #   -l  = Symlinks als Symlinks kopieren
+      #   -g  = Gruppenzugehörigkeit beibehalten
+      #   -o  = Besitzer beibehalten
+      #   -D  = Gerätedateien und Sonderdateien kopieren
+      #   -z  = Komprimierung während Übertragung
+      #   -v  = Ausführliche Ausgabe (verbose, zum Debuggen)
+      #   -c  = Checksumme prüfen statt nur Zeitstempel
+      #   --delete = Dateien auf dem Server löschen die lokal nicht mehr existieren
+      - name: Dateien per rsync auf Server kopieren
+        run: |
+          rsync -rlgoDzvc --delete \
+            -e "ssh -i ~/.ssh/deploy_key -p ${{ secrets.SSH_PORT }} -o StrictHostKeyChecking=no" \
+            ./ \
+            ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:${{ secrets.DEPLOY_PATH }}
+        # Die Variablen kommen alle aus den GitHub Secrets (siehe README.md)
+
+      # ── SCHRITT 4: Aufräumen (optional) ───────────────────
+      # Löscht den privaten Key aus dem Container nach dem Deployment.
+      # Sicherheitsmassnahme: Key ist nur so kurz wie nötig vorhanden.
+      - name: SSH-Key aufräumen
+        if: always()  # Wird auch ausgeführt wenn vorherige Schritte fehlschlagen
+        run: rm -f ~/.ssh/deploy_key
