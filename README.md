@@ -7,6 +7,9 @@
 > **Schule:** OZW Wiedlisbach  
 > **Projekt:** Schulprojekt Informatik
 
+🎮 **Live spielen:** [jaron-sommer.github.io/bergsteiger](https://jaron-sommer.github.io/bergsteiger)
+*(URL wird aktiv sobald GitHub Pages eingerichtet ist — deinen GitHub-Username oben eintragen)*
+
 ---
 
 ## 📖 Spielbeschreibung
@@ -40,12 +43,9 @@ Bergsteiger ist ein einfaches, animiertes Browserspiel. Du treibst einen Kletter
 
 ```
 bergsteiger/
-├── index.html                   # Das Spiel (eine einzige HTML-Datei)
-├── .gitignore                   # Dateien die nicht auf GitHub kommen
-├── README.md                    # Diese Datei
-└── .github/
-    └── workflows/
-        └── deploy.yml           # GitHub Actions: automatisches Deployment
+├── index.html       # Das Spiel (eine einzige HTML-Datei)
+├── .gitignore       # Dateien die nicht auf GitHub kommen
+└── README.md        # Diese Datei
 ```
 
 ---
@@ -63,15 +63,15 @@ xdg-open index.html     # Linux
 
 ---
 
-## ☁️ GitHub & Automatisches Deployment einrichten
+## ☁️ GitHub & GitHub Pages einrichten
 
-Diese Anleitung erklärt Schritt für Schritt wie du das Projekt auf GitHub hochlädst und bei jedem Push automatisch auf deinen SSH-Server deployst.
+GitHub Pages hostet das Spiel **kostenlos** direkt aus dem Repository —
+kein eigener Server, keine Konfiguration, keine Kosten.
 
 ### Voraussetzungen
 
 - [Git](https://git-scm.com/) installiert
 - [GitHub-Account](https://github.com) vorhanden
-- Ein SSH-Server (Linux-VPS, Raspberry Pi, Schulserver, etc.)
 - Terminal / Kommandozeile
 
 ---
@@ -80,13 +80,13 @@ Diese Anleitung erklärt Schritt für Schritt wie du das Projekt auf GitHub hoch
 
 1. Gehe auf [github.com](https://github.com) und melde dich an
 2. Klicke oben rechts auf **"+"** → **"New repository"**
-3. Gib dem Repository einen Namen, z.B. `bergsteiger`
-4. Wähle **Public** oder **Private**
-5. Klicke **"Create repository"** (kein README, kein .gitignore beim Erstellen!)
+3. Name: `bergsteiger`
+4. Sichtbarkeit: **Public** *(GitHub Pages ist bei Public-Repos gratis)*
+5. Klicke **"Create repository"** — kein README oder .gitignore beim Erstellen hinzufügen!
 
 ---
 
-### Schritt 2 — Lokales Git-Repository einrichten und pushen
+### Schritt 2 — Code hochladen
 
 Öffne ein Terminal im Projektordner und führe diese Befehle aus:
 
@@ -98,129 +98,50 @@ git init
 git add .
 
 # Ersten Commit erstellen
-git commit -m "Erstes Commit: Bergsteiger Spiel"
+git commit -m "Bergsteiger Schulprojekt OZW Wiedlisbach"
 
 # Hauptbranch "main" nennen
 git branch -M main
 
-# GitHub-Repository als Remote hinzufügen
-# ACHTUNG: DEIN-USERNAME und bergsteiger durch deine Werte ersetzen!
-git remote add origin https://github.com/DEIN-USERNAME/bergsteiger.git
+# GitHub-Repository verknüpfen (USERNAME ersetzen!)
+git remote add origin https://github.com/USERNAME/bergsteiger.git
 
 # Code auf GitHub hochladen
 git push -u origin main
 ```
 
-Nach dem Push ist dein Code auf GitHub sichtbar.
-
 ---
 
-### Schritt 3 — SSH-Key für das Deployment erstellen
+### Schritt 3 — GitHub Pages aktivieren
 
-Das Deployment funktioniert über SSH. Dafür brauchst du ein Schlüsselpaar:
-- **Privater Key** → kommt in GitHub Secrets (bleibt geheim!)
-- **Öffentlicher Key** → wird auf dem Server hinterlegt
+1. Im Repository auf **Settings** klicken
+2. Links in der Sidebar: **Pages** wählen
+3. Unter *Source*: **Deploy from a branch**
+4. Branch: **main** / Ordner: **/ (root)**
+5. **Save** klicken
 
-```bash
-# SSH-Schlüsselpaar generieren (kein Passwort setzen → Enter drücken wenn gefragt!)
-# -t rsa   = RSA-Algorithmus (kompatibel mit GitHub Actions)
-# -b 4096  = 4096-Bit Schlüssellänge (sicher)
-# -f       = Dateiname des Schlüssels
-ssh-keygen -t rsa -b 4096 -C "jaron.sommer.ch@icloud.ch" -f ~/.ssh/bergsteiger_deploy
+Nach 1–2 Minuten ist das Spiel live unter:
 
-# Ergebnis: zwei Dateien
-#   ~/.ssh/bergsteiger_deploy       ← Privater Key (GEHEIM!)
-#   ~/.ssh/bergsteiger_deploy.pub   ← Öffentlicher Key (kann geteilt werden)
+```
+https://USERNAME.github.io/bergsteiger
 ```
 
----
-
-### Schritt 4 — Öffentlichen Key auf dem Server hinterlegen
-
-Verbinde dich mit deinem Server und füge den öffentlichen Key hinzu:
-
-```bash
-# Öffentlichen Key anzeigen und kopieren
-cat ~/.ssh/bergsteiger_deploy.pub
-
-# Auf dem Server: in authorized_keys eintragen
-# (Entweder direkt auf dem Server ausführen, oder mit ssh-copy-id)
-ssh benutzer@dein-server.ch "mkdir -p ~/.ssh && cat >> ~/.ssh/authorized_keys" < ~/.ssh/bergsteiger_deploy.pub
-
-# Verbindung testen (sollte ohne Passwort funktionieren)
-ssh -i ~/.ssh/bergsteiger_deploy benutzer@dein-server.ch
-```
+✅ Das war's! Ab jetzt wird bei jedem `git push` die Website automatisch aktualisiert.
 
 ---
 
-### Schritt 5 — GitHub Secrets einrichten
-
-GitHub Secrets speichern sensible Daten (wie SSH-Keys) sicher.  
-Sie sind **verschlüsselt** und werden nur während GitHub Actions sichtbar.
-
-**Wo zu finden:**  
-GitHub Repository → **Settings** → **Secrets and variables** → **Actions** → **New repository secret**
-
-Erstelle diese 5 Secrets:
-
-| Secret-Name | Wert | Beispiel |
-|---|---|---|
-| `SSH_PRIVATE_KEY` | Inhalt des privaten Keys | `-----BEGIN OPENSSH PRIVATE KEY-----...` |
-| `SSH_HOST` | IP-Adresse oder Domain deines Servers | `123.456.789.0` oder `meinserver.ch` |
-| `SSH_PORT` | SSH-Port (Standard: 22) | `22` |
-| `SSH_USER` | Benutzername auf dem Server | `ubuntu` oder `admin` |
-| `DEPLOY_PATH` | Pfad auf dem Server wo die Dateien hin sollen | `/var/www/html/bergsteiger` |
-
-**Privaten Key kopieren:**
-```bash
-# macOS
-cat ~/.ssh/bergsteiger_deploy | pbcopy
-
-# Linux
-cat ~/.ssh/bergsteiger_deploy | xclip -selection clipboard
-
-# Windows (PowerShell)
-Get-Content ~/.ssh/bergsteiger_deploy | Set-Clipboard
-
-# Oder einfach: Datei öffnen und alles kopieren (inkl. BEGIN/END Zeilen!)
-```
-
-> ⚠️ **Wichtig:** Den kompletten Inhalt kopieren, von `-----BEGIN OPENSSH PRIVATE KEY-----` bis `-----END OPENSSH PRIVATE KEY-----` (inklusive dieser Zeilen!).
-
----
-
-### Schritt 6 — Deployment testen
-
-Nach dem Einrichten der Secrets: mache eine kleine Änderung und pushe:
+### Schritt 4 — Updates deployen
 
 ```bash
-# Kleine Änderung machen (z.B. Kommentar in index.html)
-# Dann committen und pushen:
-git add .
-git commit -m "Deployment testen"
-git push
-```
-
-**Deployment-Status prüfen:**  
-GitHub Repository → **Actions** → Du siehst den laufenden oder abgeschlossenen Workflow
-
-- ✅ Grüner Haken = Deployment erfolgreich
-- ❌ Rotes X = Fehler (klicke drauf um Details zu sehen)
-
----
-
-### Schritt 7 — Zukünftige Updates deployen
-
-Ab jetzt ist der Workflow fertig eingerichtet. Jedes Mal wenn du pushst:
-
-```bash
-# Änderungen machen
-# Dann:
+# Änderungen machen, dann:
 git add .
 git commit -m "Beschreibung der Änderung"
 git push
-# → GitHub Actions deployt automatisch auf den Server!
+# → GitHub Pages aktualisiert die Website automatisch!
 ```
+
+Den aktuellen Status siehst du unter:  
+Repository → **Actions** → grüner Haken = live ✅
 
 ---
 
@@ -228,20 +149,10 @@ git push
 
 | Problem | Lösung |
 |---|---|
-| `Permission denied (publickey)` | Überprüfe ob der öffentliche Key korrekt in `~/.ssh/authorized_keys` auf dem Server steht |
-| `Host key verification failed` | Stelle sicher dass `SSH_HOST` korrekt ist. Oder füge `StrictHostKeyChecking=no` temporär ein |
-| Dateien landen am falschen Ort | Überprüfe `DEPLOY_PATH` in den Secrets |
-| Workflow wird nicht ausgelöst | Stelle sicher dass du auf den `main`-Branch pushst (in `deploy.yml` konfiguriert) |
-| `rsync: command not found` | rsync ist auf `ubuntu-latest` vorinstalliert — sollte nicht vorkommen |
-
----
-
-## 🛡️ Sicherheitshinweise
-
-- Der SSH-Private-Key **niemals** direkt in den Code einchecken
-- Der Key ist in GitHub Secrets verschlüsselt gespeichert
-- Der Deployment-Key hat nur Zugriffsrechte auf den Deployment-Pfad
-- Nach jedem Deployment wird der Key aus dem Container gelöscht (siehe `deploy.yml`)
+| Seite zeigt 404 | Warte 1–2 Minuten nach dem ersten Aktivieren von Pages |
+| Änderungen nicht sichtbar | Browser-Cache leeren (Ctrl+Shift+R) oder kurz warten |
+| Pages-Option nicht sichtbar | Repository muss **Public** sein |
+| Push schlägt fehl | GitHub-Zugangsdaten prüfen, evtl. Personal Access Token erstellen |
 
 ---
 
@@ -249,8 +160,17 @@ git push
 
 - Reines **HTML / CSS / JavaScript** — keine Frameworks, keine Installation
 - Eine einzige Datei: `index.html`
-- Funktioniert in allen modernen Browsern
+- Funktioniert in allen modernen Browsern (Chrome, Firefox, Safari, Edge)
 - Mobile-optimiert (iOS & Android)
+
+---
+
+## 🔗 Alternativer Deployment-Weg (SSH-Server)
+
+Falls du statt GitHub Pages einen eigenen Server nutzen möchtest,
+enthält dieses Repo optional eine GitHub Actions Workflow-Datei
+`.github/workflows/deploy.yml` für automatisches rsync-Deployment via SSH.
+Anleitung dazu: siehe ältere Version dieses READMEs oder frag deinen Lehrer.
 
 ---
 
