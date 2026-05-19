@@ -76,3 +76,4 @@ id_ed25519
 # Sonstiges
 # =========================
 .env
+/.claude/settings.local.json

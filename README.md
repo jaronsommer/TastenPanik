@@ -1,4 +1,4 @@
-# 🏔️ Bergsteiger
+# 🏔️ TastenPanik
 
 **Ein browserbasieres Tipp-Spiel — erklimme den Gipfel mit deiner Tastatur!**
 
@@ -7,14 +7,14 @@
 > **Schule:** OZW Wiedlisbach  
 > **Projekt:** Schulprojekt Informatik
 
-🎮 **Live spielen:** [jaron-sommer.github.io/bergsteiger](https://jaron-sommer.github.io/bergsteiger)
+🎮 **Live spielen:** [jaron-sommer.github.io/tastenpanik](https://jaron-sommer.github.io/tastenpanik)
 *(URL wird aktiv sobald GitHub Pages eingerichtet ist — deinen GitHub-Username oben eintragen)*
 
 ---
 
 ## 📖 Spielbeschreibung
 
-Bergsteiger ist ein einfaches, animiertes Browserspiel. Du treibst einen Kletterer auf einen Berg — nicht mit Pfeiltasten, sondern mit deinen Fingern auf der Tastatur. Tippe die angezeigten Wörter so schnell wie möglich, um deinen Bergsteiger Schritt für Schritt den Berg hinaufzubewegen. Das Ziel: den Gipfel der Jungfrau auf **3'798 m** erreichen, bevor die Zeit abläuft!
+TastenPanik ist ein einfaches, animiertes Browserspiel. Du treibst einen Bergsteiger auf einen Berg — nicht mit Pfeiltasten, sondern mit deinen Fingern auf der Tastatur. Tippe die angezeigten Wörter so schnell wie möglich, um deinen Kletterer Schritt für Schritt den Berg hinaufzubewegen. Das Ziel: den Gipfel der Jungfrau auf **3'798 m** erreichen, bevor die Zeit abläuft!
 
 ---
 
@@ -30,20 +30,22 @@ Bergsteiger ist ein einfaches, animiertes Browserspiel. Du treibst einen Kletter
 
 ## ⛰️ Level-Übersicht
 
-| Level | Icon | Zeit | Wortlänge | Zeitbonus | Schwierigkeit |
-|---|---|---|---|---|---|
-| **Leicht** | 🌿 | 75 Sekunden | 3–5 Buchstaben | +10s alle 4 Wörter | Einsteiger |
-| **Normal** | 🏔️ | 50 Sekunden | 4–8 Buchstaben | +7s alle 5 Wörter | Mittel |
-| **Schwer** | ⛏️ | 35 Sekunden | 7–12 Buchstaben | Kein Bonus | Fortgeschritten |
-| **Extrem** | 💀 | 40 Sekunden | 9+ Buchstaben | +6s alle 3 Wörter | Profi |
+| Level      | Icon | Zeit        | Wortlänge       | Zeitbonus          | Schwierigkeit   |
+|------------|------|-------------|-----------------|--------------------|-----------------|
+| **Leicht** | 🌿   | 75 Sekunden | 3–5 Buchstaben  | +10s alle 4 Wörter | Einsteiger      |
+| **Normal** | 🏔️  | 50 Sekunden | 4–8 Buchstaben  | +7s alle 5 Wörter  | Mittel          |
+| **Schwer** | ⛏️   | 35 Sekunden | 7–12 Buchstaben | Kein Bonus         | Fortgeschritten |
+| **Extrem** | 💀   | 40 Sekunden | 9+ Buchstaben   | +6s alle 3 Wörter  | Profi           |
 
 ---
 
 ## 🗂️ Projektstruktur
 
 ```
-bergsteiger/
-├── index.html       # Das Spiel (eine einzige HTML-Datei)
+tastenpanik/
+├── index.html       # HTML-Markup (Spielstruktur)
+├── styles.css       # Layout, Farben und Animationen
+├── game.js          # Spiellogik, Wortlisten und Eventhandler
 ├── .gitignore       # Dateien die nicht auf GitHub kommen
 └── README.md        # Diese Datei
 ```
@@ -80,7 +82,7 @@ kein eigener Server, keine Konfiguration, keine Kosten.
 
 1. Gehe auf [github.com](https://github.com) und melde dich an
 2. Klicke oben rechts auf **"+"** → **"New repository"**
-3. Name: `bergsteiger`
+3. Name: `tastenpanik`
 4. Sichtbarkeit: **Public** *(GitHub Pages ist bei Public-Repos gratis)*
 5. Klicke **"Create repository"** — kein README oder .gitignore beim Erstellen hinzufügen!
 
@@ -98,13 +100,13 @@ git init
 git add .
 
 # Ersten Commit erstellen
-git commit -m "Bergsteiger Schulprojekt OZW Wiedlisbach"
+git commit -m "TastenPanik Schulprojekt OZW Wiedlisbach"
 
 # Hauptbranch "main" nennen
 git branch -M main
 
 # GitHub-Repository verknüpfen (USERNAME ersetzen!)
-git remote add origin https://github.com/USERNAME/bergsteiger.git
+git remote add origin https://github.com/USERNAME/tastenpanik.git
 
 # Code auf GitHub hochladen
 git push -u origin main
@@ -123,7 +125,7 @@ git push -u origin main
 Nach 1–2 Minuten ist das Spiel live unter:
 
 ```
-https://USERNAME.github.io/bergsteiger
+https://USERNAME.github.io/tastenpanik
 ```
 
 ✅ Das war's! Ab jetzt wird bei jedem `git push` die Website automatisch aktualisiert.
@@ -147,19 +149,19 @@ Repository → **Actions** → grüner Haken = live ✅
 
 ## 🔧 Häufige Probleme
 
-| Problem | Lösung |
-|---|---|
-| Seite zeigt 404 | Warte 1–2 Minuten nach dem ersten Aktivieren von Pages |
-| Änderungen nicht sichtbar | Browser-Cache leeren (Ctrl+Shift+R) oder kurz warten |
-| Pages-Option nicht sichtbar | Repository muss **Public** sein |
-| Push schlägt fehl | GitHub-Zugangsdaten prüfen, evtl. Personal Access Token erstellen |
+| Problem                     | Lösung                                                            |
+|-----------------------------|-------------------------------------------------------------------|
+| Seite zeigt 404             | Warte 1–2 Minuten nach dem ersten Aktivieren von Pages            |
+| Änderungen nicht sichtbar   | Browser-Cache leeren (Ctrl+Shift+R) oder kurz warten              |
+| Pages-Option nicht sichtbar | Repository muss **Public** sein                                   |
+| Push schlägt fehl           | GitHub-Zugangsdaten prüfen, evtl. Personal Access Token erstellen |
 
 ---
 
 ## 🖥️ Technisches
 
 - Reines **HTML / CSS / JavaScript** — keine Frameworks, keine Installation
-- Eine einzige Datei: `index.html`
+- Drei Dateien: `index.html`, `styles.css`, `game.js`
 - Funktioniert in allen modernen Browsern (Chrome, Firefox, Safari, Edge)
 - Mobile-optimiert (iOS & Android)
 
